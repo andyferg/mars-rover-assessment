@@ -22,6 +22,34 @@ def run_manually():
         choice = str(input('Press S to stop adding rovers. ') or True)
         choice = choice not in 'Ss'
 
+    return plateau
+
+
+def run_from_file():
+    filename = input('Filename: ')
+
+    with open(filename) as file:
+        line = file.readline().strip('\n').split(':')[1]
+
+        scope = str(line).split(' ')
+        plateau = Plateau(int(scope[0]), int(scope[1]))
+
+        while line:
+            line = file.readline()
+
+            if line:
+                landing = str(line.strip('\n').split(':')[1]).split(' ')
+
+                line = file.readline().strip('\n').split(':')[1]
+                instructions = line
+
+                rover = Rover(f'rover_{random.choice(string.ascii_letters)}', int(landing[0]), int(landing[1]), landing[2])
+                plateau.add_rover(rover, instructions)
+
+        return plateau
+
+
+def results(plateau):
     for rover in plateau.rovers:
         print(f'Rover {rover.name}: {rover.coord_x} {rover.coord_y} {rover.orientation}')
 
@@ -35,9 +63,9 @@ def start():
         choice = str(input() or True)
 
         if choice in 'mM':
-            run_manually()
+            results(run_manually())
         elif choice in 'fF':
-            pass
+            results(run_from_file())
         elif choice in 'eE':
             choice = False
             print('\n Exit')
@@ -47,6 +75,3 @@ def start():
 
 if __name__ == '__main__':
     start()
-
-if __name__ == 'test':
-    print('test')
