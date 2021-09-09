@@ -5,10 +5,17 @@ from model.plateau import Plateau
 from model.rover import Rover
 
 
-def run_manually():
-    scope = str(input('Plateau: ')).split(' ')
+def init_plateau(scope):
+    return Plateau(int(scope[0]), int(scope[1]))
 
-    plateau = Plateau(int(scope[0]), int(scope[1]))
+
+def add_rover(landing, instructions, plateau):
+    rover = Rover(f'rover_{random.choice(string.ascii_letters)}', int(landing[0]), int(landing[1]), landing[2])
+    plateau.add_rover(rover, instructions)
+
+
+def run_manually():
+    plateau = init_plateau(str(input('Plateau: ')).split(' '))
 
     choice = True
 
@@ -16,8 +23,7 @@ def run_manually():
         landing = str(input('Rover Landing: ') or True).split(' ')
         instructions = input('Rover Instructions: ')
 
-        rover = Rover(f'rover_{random.choice(string.ascii_letters)}', int(landing[0]), int(landing[1]), landing[2])
-        plateau.add_rover(rover, instructions)
+        add_rover(landing, instructions, plateau)
 
         choice = str(input('Press S to stop adding rovers. ') or True)
         choice = choice not in 'Ss'
@@ -31,8 +37,7 @@ def run_from_file():
     with open(filename) as file:
         line = file.readline().strip('\n').split(':')[1]
 
-        scope = str(line).split(' ')
-        plateau = Plateau(int(scope[0]), int(scope[1]))
+        plateau = init_plateau(str(line).split(' '))
 
         while line:
             line = file.readline()
@@ -41,10 +46,8 @@ def run_from_file():
                 landing = str(line.strip('\n').split(':')[1]).split(' ')
 
                 line = file.readline().strip('\n').split(':')[1]
-                instructions = line
 
-                rover = Rover(f'rover_{random.choice(string.ascii_letters)}', int(landing[0]), int(landing[1]), landing[2])
-                plateau.add_rover(rover, instructions)
+                add_rover(landing, instructions=line, plateau=plateau)
 
         return plateau
 
